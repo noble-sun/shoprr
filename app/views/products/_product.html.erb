@@ -15,6 +15,11 @@
   </p>
 
   <p>
+    <strong>Price:</strong>
+    <%= product.price.to_s %>
+  </p>
+
+  <p>
     <%= product.images.each do |image| %>
       <%= image_tag image %>
     <% end %>

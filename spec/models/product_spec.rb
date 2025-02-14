@@ -30,9 +30,28 @@ RSpec.describe Product, type: :model do
       expect(product).not_to be_valid
     end
 
-    it 'when quantity is not present' do
-      product.quantity = nil
-      expect(product).not_to be_valid
+    context 'when quantity' do
+      it 'is not present' do
+        product.quantity = nil
+        expect(product).not_to be_valid
+      end
+     
+      it 'is a negative number' do
+        product.quantity = -1
+        expect(product).not_to be_valid
+      end
+    end
+
+    context 'when price' do
+      it 'is not present' do
+        product.price = nil
+        expect(product).not_to be_valid
+      end
+
+      it 'is a negative number' do
+        product.price = -1.5
+        expect(product).not_to be_valid
+      end
     end
   end
 end

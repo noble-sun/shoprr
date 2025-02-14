@@ -43,11 +43,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_13_175450) do
   end
 
   create_table "products", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.integer "quantity"
+    t.string "name", null: false
+    t.string "description", null: false
+    t.integer "quantity", null: false
+    t.decimal "price", null: false
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.check_constraint "price >= 0::numeric", name: "price_must_be_positive"
+    t.check_constraint "quantity >= 0", name: "quantity_must_be_positive"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

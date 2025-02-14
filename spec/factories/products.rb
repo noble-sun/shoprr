@@ -3,6 +3,8 @@ FactoryBot.define do
     sequence(:name) { |n| "Product #{n}" }
     sequence(:description) { |n| "Description of product #{n}" }
     quantity { 5 }
+    price { 10.5 }
+    active { true }
 
     after(:build) do |product|
       product.images.attach(
