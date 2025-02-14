@@ -1,16 +1,22 @@
-<p style="color: green"><%= notice %></p>
 
 <% content_for :title, "Products" %>
 
 <h1>Products</h1>
 
-<div id="products">
+<div class="container" id="products">
+  <div class="row row-cols-5 justify-content-center">
   <% @products.each do |product| %>
-    <%= render product %>
-    <p>
-      <%= link_to "Show this product", product %>
-    </p>
+    <div class="card col m-2" style="width: 18rem;">
+      <%= image_tag product.images.first, class: "card-img-top", alt: "Main product image"%>
+      <div class="card-body">
+        <h5 class="card-title"><%= product.name %></h5>
+        <p class="card-text">R$ <%= product.price%></p>
+        <a href="#" class="btn btn-primary">Add to cart</a>
+        <a href="<%= product_path(product) %>" class="card-link">Details</a>
+      </div>
+    </div>
   <% end %>
+  </div>
 </div>
 
 <%= link_to "New product", new_product_path %>
