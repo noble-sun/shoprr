@@ -35,7 +35,7 @@ RSpec.describe Product, type: :model do
         product.quantity = nil
         expect(product).not_to be_valid
       end
-     
+
       it 'is a negative number' do
         product.quantity = -1
         expect(product).not_to be_valid

@@ -8,8 +8,8 @@ RSpec.describe "Products", type: :request do
       get "/products"
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include(products.first.name)            
-      expect(response.body).to include(products.second.name)            
+      expect(response.body).to include(products.first.name)
+      expect(response.body).to include(products.second.name)
     end
   end
 end
