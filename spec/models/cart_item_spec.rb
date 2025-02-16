@@ -11,7 +11,7 @@ RSpec.describe CartItem, type: :model do
       expect(item.valid?).to be_truthy
     end
 
-    it 'showd be invalid if there is not enough stock for the product'do
+    it 'should be invalid if there is not enough stock for the product' do
       cart = create(:cart)
       product = create(:product, quantity: 2)
 
@@ -39,7 +39,6 @@ RSpec.describe CartItem, type: :model do
       item = described_class.create(cart: cart, product: product, quantity: 2, price: 14.99)
 
       expect(item.reload.price).to eq(14.99)
-
     end
 
     context 'when updating an existing cart item' do

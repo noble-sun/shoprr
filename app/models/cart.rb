@@ -5,7 +5,7 @@ class Cart < ApplicationRecord
 
   validates_presence_of :status
 
-  enum :status, { active: 'active', ordered: 'ordered' }
+  enum :status, { active: "active", ordered: "ordered" }
 
   def total
     cart_items.pluck(:price).sum

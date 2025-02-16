@@ -9,7 +9,7 @@ RSpec.describe CartsController, type: :request do
           cart = create(:cart, user: user)
           product = create(:product)
 
-          post session_url, params: { login: user.email_address, password: user.password}
+          post session_url, params: { login: user.email_address, password: user.password }
 
           post '/carts/add', params: { id: product.id, quantity: 2 }
 
@@ -23,7 +23,7 @@ RSpec.describe CartsController, type: :request do
           cart = create(:cart, user: user)
           product = create(:product, quantity: 1)
 
-          post session_url, params: { login: user.email_address, password: user.password}
+          post session_url, params: { login: user.email_address, password: user.password }
 
           post '/carts/add', params: { id: product.id, quantity: 5 }
 
@@ -40,7 +40,7 @@ RSpec.describe CartsController, type: :request do
           cart = create(:cart, user: user)
           cart_item = create(:cart_item, cart: cart, product: product, quantity: 2)
 
-          post session_url, params: { login: user.email_address, password: user.password}
+          post session_url, params: { login: user.email_address, password: user.password }
 
           post '/carts/add', params: { id: product.id, quantity: 3 }
 
@@ -56,7 +56,7 @@ RSpec.describe CartsController, type: :request do
           cart = create(:cart, user: user)
           cart_item = create(:cart_item, cart: cart, product: product, quantity: 2)
 
-          post session_url, params: { login: user.email_address, password: user.password}
+          post session_url, params: { login: user.email_address, password: user.password }
 
           post '/carts/add', params: { id: product.id, quantity: 5 }
 

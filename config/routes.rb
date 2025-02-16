@@ -4,11 +4,11 @@ Rails.application.routes.draw do
   resources :products
   resources :registrations, only: [ :new, :create ]
 
-  resources :carts, only: [:show] do
-    post 'remove'
+  resources :carts, only: [ :show ] do
+    post "remove"
   end
-  post 'carts/add', to: 'carts#add', as: 'cart_add'
-  #get 'cart', to: 'cart#show'
+  post "carts/add", to: "carts#add", as: "cart_add"
+  # get 'cart', to: 'cart#show'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
