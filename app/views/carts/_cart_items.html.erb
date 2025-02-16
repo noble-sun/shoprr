@@ -1,0 +1,31 @@
+<%= @cart.cart_items.each do |item| %>
+  <% product = item.product %>
+  <div id="<%= "cart-#{product.id}" %>">
+  <div class="d-inline-flex justify-contentt-around">
+  <p>
+    <strong>Name:</strong>
+    <%= product.name %>
+  </p>
+
+  <p>
+    <strong>Quantity:</strong>
+    <%= item.quantity %>
+  </p>
+
+  <p>
+    <strong>Price:</strong>
+    <%= item.price %>
+  </p>
+    <%= form_with(url: cart_add_path) do |form| %>
+    <%= form.hidden_field :id, value: product.id %>
+    <%= form.number_field :quantity, value: item.quantity, min: 0, max: product.quantity%>
+    <%= form.submit "update quantity"%>
+  <% end %>
+
+  <%= form_with(url: cart_remove_path(@cart)) do |form| %>
+    <%= form.hidden_field :id, value: item.id %>
+    <%= form.submit "Remove item"%>
+  <% end %>
+
+  </div>
+<% end %>

@@ -21,7 +21,13 @@
 
   <p>
     <%= product.images.each do |image| %>
-      <%= image_tag image %>
+      <%= image_tag image, class: "h-25 w-25" %>
     <% end %>
   </p>
+
+  <%= form_with(url: cart_add_path) do |form| %>
+    <%= form.hidden_field :id, value: product.id %>
+    <%= form.number_field :quantity, value: 0, min: 1, max: product.quantity %>
+    <%= form.submit "Add to cart"%>
+  <% end %>
 </div>

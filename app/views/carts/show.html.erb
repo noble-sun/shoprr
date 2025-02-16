@@ -1,0 +1,7 @@
+<h1> Cart </h1>
+<h2> Cart for user <%= Current.user.email_address %> </h2>
+<%= render 'cart_items', local: @cart %>
+<p>
+  <strong> Total: </strong>
+  <%= @cart.total %>
+</p>
