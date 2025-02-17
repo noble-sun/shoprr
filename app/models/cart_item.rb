@@ -7,6 +7,10 @@ class CartItem < ApplicationRecord
 
   before_save :update_price, unless: -> { will_save_change_to_price? }
 
+  def update_product_stock!
+    product.update!(quantity: product.quantity - quantity)
+  end
+
   private
 
   def stock_availabillity

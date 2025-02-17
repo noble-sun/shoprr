@@ -1,0 +1,29 @@
+<h1>Checkout</h1>
+
+<p> Selecione endereco para entrega </p>
+<%= button_to "Add new address", new_address_path, method: :get %>
+
+<% if @addresses %>
+<%= form_with(model: @order, url: orders_path) do |form| %>
+  <%# form.hidden_field :cart_id, value: Current.user.active_cart.id %>
+  <%# form.hidden_field :user_id, value: Current.user.id %>
+  <% @addresses.each do |address| %>
+    <div class="form-check m-4">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="order[address_id]"
+        value="<%= address.id %>"
+        <%= "checked" if address.primary_address %>
+      >
+      <label class="form-check-label" for="address-radio">
+        <%= render 'addresses/address', address: address %>
+      </label>
+      <%= link_to "Edit this address", edit_address_path(address) %>
+    </div>
+  <% end %>
+  <%= form.submit "Order" %>
+<% end %>
+<% end %>
+
+

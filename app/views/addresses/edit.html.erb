@@ -1,0 +1,13 @@
+<% content_for :title, "Editing address" %>
+
+<h1>Editing address</h1>
+
+<%= render "form", address: @address %>
+
+<br>
+
+<div>
+  <%= link_to "Show this address", @address %> |
+  <%= link_to "Back to addresses", addresses_path %>
+  <%= button_to "Destroy this address", @address, method: :delete %>
+</div>

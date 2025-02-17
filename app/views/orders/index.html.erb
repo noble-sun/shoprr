@@ -1,0 +1,18 @@
+<% content_for :title, "Orders" %>
+
+<h1>Orders</h1>
+
+<div id="orders" class="d-flex flex-column">
+  <% @orders.each do |order| %>
+    <div class="d-inline-flex border rounded m-2 p-2">
+      <p>
+        <strong> Order number: </strong>
+        <%= order.id %>
+      </p>
+      <p>
+        <strong> status: </strong>
+        <%= order.status %>
+      </p>
+    </div>
+  <% end %>
+</div>
