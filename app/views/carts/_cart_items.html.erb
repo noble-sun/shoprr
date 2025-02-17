@@ -1,4 +1,4 @@
-<%= @cart.cart_items.each do |item| %>
+<% @cart.cart_items.each do |item| %>
   <% product = item.product %>
   <div id="<%= "cart-#{product.id}" %>">
   <div class="d-inline-flex justify-contentt-around">
