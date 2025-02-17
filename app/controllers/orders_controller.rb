@@ -1,5 +1,4 @@
 class OrdersController < ApplicationController
-  
   def index
     @orders = Current.user.orders
   end

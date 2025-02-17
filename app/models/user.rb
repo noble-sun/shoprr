@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
   validates_presence_of :email_address, :cpf, :password_digest
   validates :email_address, :cpf, uniqueness: true
-  
+
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   def self.authenticate_by(auth)
