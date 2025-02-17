@@ -2,9 +2,11 @@ class User < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :carts
+  has_many :addresses, dependent: :destroy
 
   validates_presence_of :email_address, :cpf, :password_digest
   validates :email_address, :cpf, uniqueness: true
+  
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   def self.authenticate_by(auth)
