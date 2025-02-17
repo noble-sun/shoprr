@@ -1,0 +1,25 @@
+<h1>Checkout</h1>
+
+<p> Selecione endereco para entrega </p>
+
+<%= form_with(model: @order, url: orders_path) do |form| %>
+  <%# form.hidden_field :cart_id, value: Current.user.active_cart.id %>
+  <%# form.hidden_field :user_id, value: Current.user.id %>
+  <% @addresses.each do |address| %>
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="order[address_id]"
+        value="<%= address.id %>"
+        <%= "checked" if address.primary_address %>
+      >
+      <label class="form-check-label" for="address-radio">
+        <%= render 'addresses/address', address: address %>
+      </label>
+    </div>
+  <% end %>
+
+<%= form.submit "Order" %>
+<% end %>
+

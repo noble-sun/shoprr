@@ -1,7 +1,13 @@
+<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+
 <h1> Cart </h1>
 <h2> Cart for user <%= Current.user.email_address %> </h2>
+
 <%= render 'cart_items', local: @cart %>
 <p>
   <strong> Total: </strong>
   <%= @cart.total %>
 </p>
+
+<%= button_to 'Checkout', new_order_path, method: :get %>

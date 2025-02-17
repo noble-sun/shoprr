@@ -2,6 +2,7 @@ class Cart < ApplicationRecord
   belongs_to :user
   has_many :cart_items
   has_many :products, through: :cart_items
+  has_one :order
 
   validates_presence_of :status
 

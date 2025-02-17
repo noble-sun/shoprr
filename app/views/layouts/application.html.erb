@@ -37,6 +37,9 @@
               <% end %>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="<%= orders_path %>">Orders</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="<%= cart_path(Current.user.active_cart) %>">Cart</a>
             </li>
           </ul>
