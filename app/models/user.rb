@@ -7,6 +7,8 @@ class User < ApplicationRecord
 
   validates_presence_of :email_address, :cpf, :password_digest
   validates :email_address, :cpf, uniqueness: true
+  validates :cpf, length: { is: 11 }, numericality: { only_integer: true }
+  validates_with CpfValidator, if: Proc.new { |model| model.cpf.present? }
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
