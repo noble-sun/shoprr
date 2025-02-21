@@ -4,7 +4,7 @@ RSpec.describe "Registrations", type: :request do
   describe "POST /create" do
     context 'create a new user' do
       it 'successfully' do
-        params = { user: { email_address: 'email@email.com.br', cpf: '79027123020', password: 'pass@123' } }
+        params = { user: { email_address: 'valid@email.com', cpf: '79027123020', password: 'pass@123' } }
 
         expect {
           post '/registrations', params: params
@@ -18,7 +18,7 @@ RSpec.describe "Registrations", type: :request do
 
     context 'fail to create user' do
       it 'when email address already exist' do
-        email = 'email@email.com.br'
+        email = 'valid@email.com'
         create(:user, email_address: email)
 
         params = { user: { email_address: email, cpf: '12312312312', password: 'pass@123' } }
