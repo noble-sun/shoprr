@@ -93,7 +93,7 @@ RSpec.describe User, type: :model do
 
           new_user.valid?
 
-          expect(new_user.errors[:email_address]).to include("There's already a email with this local name registered")
+          expect(new_user.errors[:email_address]).to include("There's already an email with this local name registered")
         end
 
         it 'is invalid when email with alias already exists' do
@@ -102,7 +102,7 @@ RSpec.describe User, type: :model do
 
           new_user.valid?
 
-          expect(new_user.errors[:email_address]).to include("There's already a email with this local name registered")
+          expect(new_user.errors[:email_address]).to include("There's already an email with this local name registered")
         end
       end
     end
@@ -142,28 +142,69 @@ RSpec.describe User, type: :model do
         end
       end
     end
+
+    context 'password' do
+      context 'length' do
+        it 'is invalid when has less than 8 characters' do
+          user = build(:user, password: '123@abc')
+
+          expect(user).to be_invalid
+          expect(user.errors[:password]).to include('must be at least 8 characters')
+        end
+      end
+
+      context 'character specificity' do
+        it "is invalid when there's no digits" do
+          user = build(:user, password: 'abcd@abcasdf')
+
+          expect(user).to be_invalid
+          expect(user.errors[:password]).to include('must contain at least 1 digit')
+        end
+
+        it "is invalid when there's no lowercase letters" do
+          user = build(:user, password: 'ABCD@123')
+
+          expect(user).to be_invalid
+          expect(user.errors[:password]).to include('must contain at least 1 lowercase letter')
+        end
+
+        it "is invalid when there's no uppercase letters" do
+          user = build(:user, password: 'abcd@123')
+
+          expect(user).to be_invalid
+          expect(user.errors[:password]).to include('must contain at least 1 uppercase letter')
+        end
+
+        it "is invalid when there's no symbols" do
+          user = build(:user, password: 'abcd123ABC')
+
+          expect(user).to be_invalid
+          expect(user.errors[:password]).to include('must contain at least 1 symbol')
+        end
+      end
+    end
   end
 
   describe '.authenticate_by' do
     it 'returns user if email_address and password are valid' do
-      user = create(:user, email_address: 'user@email.com', password: 'pass@123')
+      user = create(:user, email_address: 'user@email.com', password: 'Pass@123')
 
-      authenticated_user = User.authenticate_by({ login: 'user@email.com', password: 'pass@123' })
+      authenticated_user = User.authenticate_by({ login: 'user@email.com', password: 'Pass@123' })
 
       expect(authenticated_user).to eq(user)
     end
 
     it 'returns user if cpf and password are valid' do
-      user = create(:user, cpf: '79027123020', password: 'pass@123')
+      user = create(:user, cpf: '79027123020', password: 'Pass@123')
 
-      authenticated_user = User.authenticate_by({ login: '79027123020', password: 'pass@123' })
+      authenticated_user = User.authenticate_by({ login: '79027123020', password: 'Pass@123' })
 
       expect(authenticated_user).to eq(user)
     end
 
     context 'returns nil' do
       it 'when password is incorrect' do
-        user = create(:user, cpf: '79027123020', password: 'pass@123')
+        user = create(:user, cpf: '79027123020', password: 'Pass@123')
 
         authenticated_user = User.authenticate_by({
           login: '79027123020', password: 'incorrect-password'
@@ -173,7 +214,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'when email or cpf is incorrect' do
-        user = create(:user, cpf: '79027123020', password: 'pass@123')
+        user = create(:user, cpf: '79027123020', password: 'Pass@123')
 
         authenticated_user = User.authenticate_by({
           login: 'invalid-login', password: 'pass@123'
