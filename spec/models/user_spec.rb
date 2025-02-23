@@ -28,6 +28,11 @@ RSpec.describe User, type: :model do
 
           expect(user).to be_valid
         end
+
+        it 'when it has multiple domain levels' do
+          user = build(:user, email_address: 'valid.email_format@email-domain.com.br')
+          expect(user).to be_valid
+        end
       end
 
       context 'is invalid' do
@@ -73,6 +78,13 @@ RSpec.describe User, type: :model do
           user = build(:user, email_address: 'valid+email@email.org')
 
           expect(user).to be_valid
+        end
+
+        it 'is invalid when alias symbol is at the start of local name' do
+          user = build(:user, email_address: '+invalid.email@email.com.br')
+
+          user.valid?
+          expect(user.errors[:email_address]).to include("is not a valid email format")
         end
 
         it 'is invalid when local name email already exists' do
