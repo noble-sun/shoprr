@@ -4,7 +4,17 @@ RSpec.describe "Registrations", type: :request do
   describe "POST /create" do
     context 'create a new user' do
       it 'successfully' do
-        params = { user: { email_address: 'valid@email.com', cpf: '79027123020', password: 'Pass@123' } }
+        params = {
+          user: {
+            name: 'Maria',
+            surname: 'Li',
+            date_of_birth: '31/12/1999',
+            phone: '11123456789',
+            email_address: 'valid@email.com',
+            cpf: '79027123020',
+            password: 'Pass@123'
+          }
+        }
 
         expect {
           post '/registrations', params: params
@@ -21,7 +31,17 @@ RSpec.describe "Registrations", type: :request do
         email = 'valid@email.com'
         create(:user, email_address: email)
 
-        params = { user: { email_address: email, cpf: '12312312312', password: 'Pass@123' } }
+        params = {
+          user: {
+            name: email,
+            surname: 'Li',
+            date_of_birth: '31/12/1999',
+            phone: '11123456789',
+            email_address: 'valid@email.com',
+            cpf: '79027123020',
+            password: 'Pass@123'
+          }
+        }
 
         expect {
           post '/registrations', params: params
@@ -32,7 +52,17 @@ RSpec.describe "Registrations", type: :request do
         cpf = '79027123020'
         create(:user, cpf: cpf)
 
-        params = { user: { email_address: 'newemail@email.com', cpf: cpf, password: 'Pass@123' } }
+        params = {
+          user: {
+            name: 'Maria',
+            surname: 'Li',
+            date_of_birth: '31/12/1999',
+            phone: '11123456789',
+            email_address: 'valid@email.com',
+            cpf: cpf,
+            password: 'Pass@123'
+          }
+        }
 
         expect {
           post '/registrations', params: params
