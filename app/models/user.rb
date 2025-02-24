@@ -5,7 +5,8 @@ class User < ApplicationRecord
   has_many :addresses, dependent: :destroy
   has_many :orders, dependent: :destroy
 
-  validates_presence_of :email_address, :cpf, :password
+  validates_presence_of :email_address, :cpf, :password, :name, :surname
+  validates :phone, numericality: { only_integer: true }, length: { is: 11 }
 
   with_options if: -> { password.present? } do
     validates :password, length: { minimum: 8 }
