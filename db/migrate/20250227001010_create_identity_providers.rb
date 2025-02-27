@@ -4,6 +4,8 @@ class CreateIdentityProviders < ActiveRecord::Migration[8.0]
       t.references :user, null: false, foreign_key: true
       t.string :name, null: false
       t.string :account_identifier, null: false
+      t.string :access_token, null: false
+      t.string :id_token, null: false
 
       t.timestamps
     end
