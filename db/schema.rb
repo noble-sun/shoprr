@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_24_144004) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_27_001010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,6 +77,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_144004) do
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
+  create_table "identity_providers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "account_identifier", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_identifier"], name: "index_identity_providers_on_account_identifier"
+    t.index ["user_id"], name: "index_identity_providers_on_user_id"
+  end
+
   create_table "orders", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "address_id", null: false
@@ -132,6 +142,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_144004) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "identity_providers", "users"
   add_foreign_key "orders", "addresses"
   add_foreign_key "orders", "carts"
   add_foreign_key "orders", "users"
