@@ -27,5 +27,7 @@ module App
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    config.identity_provider = config_for(:identity_providers)
   end
 end
