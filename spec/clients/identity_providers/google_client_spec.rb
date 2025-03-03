@@ -21,7 +21,7 @@ RSpec.describe IdentityProviders::GoogleClient do
     end
   end
 
-  describe '#callback' do
+  describe '#fetch_token' do
     context 'when requesting token' do
       it 'initializes OAuth2::Client with correct parameters' do
         client_id = 'google-client-id'
@@ -56,7 +56,7 @@ RSpec.describe IdentityProviders::GoogleClient do
         }
         allow(oauth2_response_double).to receive(:parsed).and_return(response_hash)
 
-        described_class.new.callback(code: 'code')
+        described_class.new.fetch_token(code: 'code')
 
         expect(OAuth2::Client).to have_received(:new).with(
           client_id, client_secret, {
@@ -92,7 +92,7 @@ RSpec.describe IdentityProviders::GoogleClient do
         }
         allow(oauth2_response_double).to receive(:parsed).and_return(response_hash)
 
-        response = described_class.new.callback(code: code).response
+        response = described_class.new.fetch_token(code: code).response
 
         expect(response).to eq(oauth2_response_double)
         expect(response.parsed).to match(
@@ -101,6 +101,74 @@ RSpec.describe IdentityProviders::GoogleClient do
         expect(auth_code_strategy_double).to have_received(:get_token).with(
           code, redirect_uri: auth_google_callback_url, grant_type: 'authorization_code'
         )
+      end
+
+      context 'when client_id is not valid' do
+        it 'return invalid request error' do
+          stub_request(:post, 'https://oauth2.googleapis.com/token').and_raise(
+            OAuth2::Error.new({
+              "error": "invalid_client",
+              "error_description": "The OAuth client was not found."
+            }.to_json)
+          )
+
+          expect{ described_class.new.fetch_token(code: 'code') }.to raise_error(
+            IdentityProviders::GoogleClient::OAuthClientError
+          ) do |error|
+            expect(error.message).to eq('Google client error: The OAuth client was not found.')
+          end
+        end
+      end
+
+      context 'when client_secret is not valid' do
+        it 'return invalid request error' do
+          stub_request(:post, 'https://oauth2.googleapis.com/token').and_raise(
+            OAuth2::Error.new({
+              "error": "invalid_client",
+              "error_description": "Unauthorized"
+            }.to_json)
+          )
+
+          expect{ described_class.new.fetch_token(code: 'code') }.to raise_error(
+            IdentityProviders::GoogleClient::OAuthClientError
+          ) do |error|
+            expect(error.message).to eq('Google client error: Unauthorized')
+          end
+        end
+      end
+
+      context 'when code is not valid' do
+        it 'return invalid permission error' do
+          stub_request(:post, 'https://oauth2.googleapis.com/token').and_raise(
+            OAuth2::Error.new({
+              "error": "invalid_grant",
+              "error_description": "Bad Request"
+            }.to_json)
+          )
+
+          expect{ described_class.new.fetch_token(code: 'code') }.to raise_error(
+            IdentityProviders::GoogleClient::OAuthGrantError
+          ) do |error|
+            expect(error.message).to eq('Google authorization error: Bad Request')
+          end
+        end
+      end
+
+      context 'when redirect_uri is not tha same as configured on client app' do
+        it 'return wrong redirect uri error' do
+          stub_request(:post, 'https://oauth2.googleapis.com/token').and_raise(
+            OAuth2::Error.new({
+              "error": "redirect_uri_mismatch",
+              "error_description": "Bad Request"
+            }.to_json)
+          )
+
+          expect{ described_class.new.fetch_token(code: 'code') }.to raise_error(
+            IdentityProviders::GoogleClient::OAuthRedirectError
+          ) do |error|
+            expect(error.message).to eq('mismatch redirect uri on client app error: Bad Request')
+          end
+        end
       end
     end
   end

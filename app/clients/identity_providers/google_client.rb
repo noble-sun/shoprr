@@ -1,5 +1,9 @@
 module IdentityProviders
   class GoogleClient
+    class OAuthClientError < StandardError; end
+    class OAuthGrantError < StandardError; end
+    class OAuthRedirectError < StandardError; end
+
     include Rails.application.routes.url_helpers
 
     def initialize
@@ -20,7 +24,7 @@ module IdentityProviders
       [ auth_url, state ]
     end
 
-    def callback(code:)
+    def fetch_token(code:)
       client = oauth2_client(
         client_secret: ENV["GOOGLE_CLIENT_SECRET"],
         base_url: ENV["GOOGLE_OAUTH2_BASE_URL"]
@@ -31,6 +35,19 @@ module IdentityProviders
         redirect_uri: redirect_uri,
         grant_type: "authorization_code"
       )
+    rescue OAuth2::Error => e
+      error = JSON.parse(e.body, symbolize_names: true)
+
+      case error[:error]
+      when 'invalid_client'
+        raise OAuthClientError, "Google client error: #{error[:error_description]}"
+      when 'invalid_grant'
+        raise OAuthGrantError, "Google authorization error: #{error[:error_description]}"
+      when 'redirect_uri_mismatch'
+        raise OAuthRedirectError, "mismatch redirect uri on client app error: #{error[:error_description]}"
+      else
+        raise OAuth2::Error, e.message
+      end
     end
 
     def revoke_access(user:)
@@ -38,6 +55,8 @@ module IdentityProviders
 
       Net::HTTP.post_form(uri, "token" => user.identity_provider.access_token)
     end
+
+    private
 
     def redirect_uri
       ENV["BASE_URL"] + auth_google_callback_path
