@@ -83,6 +83,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_27_001010) do
     t.string "account_identifier", null: false
     t.string "access_token", null: false
     t.string "id_token", null: false
+    t.string "refresh_token", null: false
+    t.datetime "expires_in", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_identifier"], name: "index_identity_providers_on_account_identifier"

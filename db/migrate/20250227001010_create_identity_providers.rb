@@ -6,6 +6,8 @@ class CreateIdentityProviders < ActiveRecord::Migration[8.0]
       t.string :account_identifier, null: false
       t.string :access_token, null: false
       t.string :id_token, null: false
+      t.string :refresh_token, null: false
+      t.datetime :expires_in, null: false
 
       t.timestamps
     end
