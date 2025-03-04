@@ -16,6 +16,7 @@ module IdentityProviders
       state = generate_anti_forgery_state
 
       auth_url = client.auth_code.authorize_url(
+        access_type: "offline",
         redirect_uri: redirect_uri,
         scope: "openid email profile",
         state: state
@@ -39,24 +40,64 @@ module IdentityProviders
       error = JSON.parse(e.body, symbolize_names: true)
 
       case error[:error]
-      when 'invalid_client'
+      when "invalid_client"
         raise OAuthClientError, "Google client error: #{error[:error_description]}"
-      when 'invalid_grant'
+      when "invalid_grant"
         raise OAuthGrantError, "Google authorization error: #{error[:error_description]}"
-      when 'redirect_uri_mismatch'
+      when "redirect_uri_mismatch"
         raise OAuthRedirectError, "mismatch redirect uri on client app error: #{error[:error_description]}"
       else
-        raise OAuth2::Error, e.message
+        raise OAuth2::Error, e.body
       end
     end
 
     def revoke_access(user:)
-      uri = URI(ENV["GOOGLE_OAUTH2_BASE_URL"] + Rails.configuration.identity_provider[:google][:revoke_url])
+      provider = user.identity_provider
 
-      Net::HTTP.post_form(uri, "token" => user.identity_provider.access_token)
+      if DateTime.now > provider.expires_in
+        refresh_access_token(provider:)
+      end
+
+      Net::HTTP.post_form(revoke_url, "token" => user.identity_provider.access_token)
     end
 
     private
+
+    def refresh_access_token(provider:)
+      client = oauth2_client(
+        client_secret: ENV["GOOGLE_CLIENT_SECRET"],
+        base_url: ENV["GOOGLE_OAUTH2_BASE_URL"]
+      )
+
+      response = client.auth_code.get_token(
+        nil,
+        grant_type: "refresh_token",
+        refresh_token: provider.refresh_token
+      )
+
+      parsed_response = response.response.parsed
+
+      provider.update(
+        access_token: parsed_response["access_token"],
+        expires_in: (DateTime.now + parsed_response["expires_in"].seconds)
+      )
+
+    rescue OAuth2::Error => e
+      error = JSON.parse(e.body, symbolize_names: true)
+
+      case error[:error]
+      when "invalid_client"
+        raise OAuthClientError, "Google client error: #{error[:error_description]}"
+      when "invalid_grant"
+        raise OAuthGrantError, "invalid or expired refresh token: #{error[:error_description]}"
+      else
+        raise OAuth2::Error, e.body
+      end
+    end
+
+    def revoke_url
+      URI(ENV["GOOGLE_OAUTH2_BASE_URL"] + Rails.configuration.identity_provider[:google][:revoke_url])
+    end
 
     def redirect_uri
       ENV["BASE_URL"] + auth_google_callback_path
