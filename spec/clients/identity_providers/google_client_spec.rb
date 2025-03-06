@@ -200,6 +200,9 @@ RSpec.describe IdentityProviders::GoogleClient do
       end
     end
 
+  end
+
+  describe '#refresh_token' do
     context 'when access token is expired' do
       it 'successfully refresh access token and revoke access' do
         user = create(:user)
@@ -251,5 +254,5 @@ RSpec.describe IdentityProviders::GoogleClient do
         )
       end
     end
-  end
+    end
 end

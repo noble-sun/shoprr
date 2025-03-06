@@ -56,14 +56,8 @@ module IdentityProviders
     def revoke_access(user:)
       provider = user.identity_provider
 
-      if DateTime.now > provider.expires_in
-        refresh_access_token(provider:)
-      end
-
       Net::HTTP.post_form(revoke_url, "token" => user.identity_provider.access_token)
     end
-
-    private
 
     def refresh_access_token(provider:)
       client = oauth2_client(
@@ -96,6 +90,8 @@ module IdentityProviders
         raise OAuth2::Error, e.body
       end
     end
+
+    private
 
     def revoke_url
       URI(ENV["GOOGLE_OAUTH2_BASE_URL"] + Rails.configuration.identity_provider[:google][:revoke_url])
