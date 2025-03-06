@@ -94,10 +94,9 @@ RSpec.describe IdentityProviders::GoogleClient do
         }
         allow(oauth2_response_double).to receive(:parsed).and_return(response_hash)
 
-        response = described_class.new.fetch_token(code: code).response
+        response = described_class.new.fetch_token(code: code)
 
-        expect(response).to eq(oauth2_response_double)
-        expect(response.parsed).to match(
+        expect(response).to match(
           hash_including('access_token', 'id_token', 'scope', 'token_type', 'expires_in', 'refresh_token')
         )
         expect(auth_code_strategy_double).to have_received(:get_token).with(

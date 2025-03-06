@@ -31,11 +31,13 @@ module IdentityProviders
         base_url: ENV["GOOGLE_OAUTH2_BASE_URL"]
       )
 
-      client.auth_code.get_token(
+      response = client.auth_code.get_token(
         code,
         redirect_uri: redirect_uri,
         grant_type: "authorization_code"
       )
+
+      response.response.parsed
     rescue OAuth2::Error => e
       error = JSON.parse(e.body, symbolize_names: true)
 
