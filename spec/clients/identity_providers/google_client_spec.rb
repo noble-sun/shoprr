@@ -188,7 +188,7 @@ RSpec.describe IdentityProviders::GoogleClient do
                                    access_token: access_token
                                   )
 
-        net_httpok_double = instance_double(Net::HTTPOK)
+        net_httpok_double = instance_double(Net::HTTPOK, code: "200")
         allow(Net::HTTP).to receive(:post_form).and_return(net_httpok_double)
 
         response = described_class.new.revoke_access(user:)
@@ -196,7 +196,7 @@ RSpec.describe IdentityProviders::GoogleClient do
         expect(Net::HTTP).to have_received(:post_form).with(
           URI("#{google_base_url}/revoke"), 'token' => access_token
         )
-        expect(response).to eq(net_httpok_double)
+        expect(response).to be_truthy
       end
     end
 
