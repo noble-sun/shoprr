@@ -200,11 +200,25 @@ RSpec.describe IdentityProviders::GoogleClient do
       end
     end
 
+    context 'when token is invalid' do
+      it 'return revoke error' do
+        user = create(:user)
+        create(:identity_provider, user:)
+
+        allow(Net::HTTP).to receive(:post_form).and_return(Net::HTTPBadRequest.new(nil, 400, 'Bad Request'))
+
+          expect { described_class.new.revoke_access(user:) }.to raise_error(
+            IdentityProviders::GoogleClient::OAuthUnrevokableError
+          ) do |error|
+            expect(error.message).to eq('Token is not revokable.')
+          end
+      end
+    end
   end
 
   describe '#refresh_token' do
     context 'when access token is expired' do
-      it 'successfully refresh access token and revoke access' do
+      it 'successfully refresh access token' do
         user = create(:user)
         access_token = 'access-token-1234asdf'
         refresh_token = 'refresh-token-123'
@@ -242,13 +256,11 @@ RSpec.describe IdentityProviders::GoogleClient do
         net_httpok_double = instance_double(Net::HTTPOK)
         allow(Net::HTTP).to receive(:post_form).and_return(net_httpok_double)
 
-        described_class.new.revoke_access(user:)
+        described_class.new.refresh_access_token(user:)
 
+        identity_provider.reload
         expect(identity_provider.access_token).to eq("updated-token-ya29.a0AeXRPp4PQYlm775")
         expect(identity_provider.expires_in).to be_within(1.second).of(DateTime.now + 3599.seconds)
-        expect(Net::HTTP).to have_received(:post_form).with(
-          URI("https://oauth2.googleapis.com/revoke"), 'token' => identity_provider.access_token
-        )
         expect(auth_code_strategy_double).to have_received(:get_token).with(
           nil, grant_type: 'refresh_token', refresh_token: refresh_token
         )

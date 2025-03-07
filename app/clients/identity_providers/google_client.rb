@@ -3,6 +3,7 @@ module IdentityProviders
     class OAuthClientError < StandardError; end
     class OAuthGrantError < StandardError; end
     class OAuthRedirectError < StandardError; end
+    class OAuthUnrevokableError < StandardError; end
 
     include Rails.application.routes.url_helpers
 
@@ -56,10 +57,18 @@ module IdentityProviders
     def revoke_access(user:)
       provider = user.identity_provider
 
-      Net::HTTP.post_form(revoke_url, "token" => user.identity_provider.access_token)
+      result = Net::HTTP.post_form(revoke_url, "token" => provider.access_token)
+
+      unless result.code == "200"
+        raise OAuthUnrevokableError, "Token is not revokable."
+      end
+
+      true
     end
 
-    def refresh_access_token(provider:)
+    def refresh_access_token(user:)
+      provider = user.identity_provider
+
       client = oauth2_client(
         client_secret: ENV["GOOGLE_CLIENT_SECRET"],
         base_url: ENV["GOOGLE_OAUTH2_BASE_URL"]
