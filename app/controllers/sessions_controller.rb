@@ -15,6 +15,11 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    if Current.user.identity_provider
+      result = RevokeGoogleAccessService.call(user: Current.user)
+      Rails.logger.warn result.error unless result.success?
+    end
+
     terminate_session
     redirect_to new_session_path
   end
