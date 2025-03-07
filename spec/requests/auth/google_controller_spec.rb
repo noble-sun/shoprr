@@ -1,6 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe 'Google Auth', type: :request do
+  describe 'GET /authenticate' do
+    context 'redirect to google authentication page and store state in session' do
+      it 'successfully' do
+        get auth_google_path
+
+        url = URI(response.redirect_url)
+        redirect_params = CGI.parse(url.query)
+        expect(response).to redirect_to(match(url.host + url.path))
+        expect(redirect_params).to match(
+          hash_including('client_id', 'redirect_uri', 'response_type', 'scope', 'state')
+        )
+        expect(session['anti_forgery_state']).to_not be_nil
+      end
+    end
+  end
+
   describe 'GET /callback' do
     context 'authenticate new user and redirects to root path' do
       it 'successfully' do
