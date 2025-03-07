@@ -25,11 +25,4 @@ class Auth::GoogleController < ApplicationController
       redirect_to new_session_path, alert: result.error
     end
   end
-
-  def revoke
-    # result = RevokeGoogleAccessService.call(user: Current.user)
-    terminate_session
-
-    redirect_to new_session_path
-  end
 end
