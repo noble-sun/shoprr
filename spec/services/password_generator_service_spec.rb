@@ -5,13 +5,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
     context 'generate a randomized password' do
       context 'with all characters' do
         it 'successfully' do
-          password = described_class.new(
+          password = described_class.call(
             length: 10,
             min_uppercase: 2,
             min_lowercase: 2,
             min_number: 2,
             min_symbol: 2,
-          ).call
+          )
 
           expect(password.length).to eq(10)
 
@@ -28,13 +28,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
 
       context 'only without uppercase characters' do
         it 'successfully' do
-          password = described_class.new(
+          password = described_class.call(
             length: 6,
             min_uppercase: 0,
             min_lowercase: 2,
             min_number: 2,
             min_symbol: 2,
-          ).call
+          )
 
           expect(password.length).to eq(6)
           expect(password).to match(/[^A-Z]/)
@@ -46,13 +46,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
 
       context 'only without lowercase characters' do
         it 'successfully' do
-          password = described_class.new(
+          password = described_class.call(
             length: 10,
             min_uppercase: 2,
             min_lowercase: 0,
             min_number: 2,
             min_symbol: 2,
-          ).call
+          )
 
           expect(password.length).to eq(10)
           expect(password).to match(/[^a-z]/)
@@ -64,13 +64,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
 
       context 'only without numbers' do
         it 'successfully' do
-          password = described_class.new(
+          password = described_class.call(
             length: 10,
             min_uppercase: 2,
             min_lowercase: 2,
             min_number: 0,
             min_symbol: 2,
-          ).call
+          )
 
           expect(password.length).to eq(10)
           expect(password).to match(/[^0-9]/)
@@ -82,13 +82,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
 
       context 'only without symbols' do
         it 'successfully' do
-          password = described_class.new(
+          password = described_class.call(
             length: 10,
             min_uppercase: 2,
             min_lowercase: 2,
             min_number: 2,
             min_symbol: 0,
-          ).call
+          )
 
           expect(password.length).to eq(10)
           expect(password).to match(/[^[:^alnum:]]/)
@@ -101,14 +101,13 @@ RSpec.describe PasswordGeneratorService, type: :service do
 
     context 'when length is less than the sum of minimum character types specified' do
       it 'do not generate password' do
-        password_generator = described_class.new(
+        expect { described_class.call(
           length: 5,
           min_uppercase: 2,
           min_lowercase: 2,
           min_number: 2,
           min_symbol: 2,
-        )
-        expect { password_generator.call }.to raise_error(
+        ) }.to raise_error(
           PasswordGeneratorService::InvalidPasswordLength
         ).with_message('length should be greater or equal the sum of minimum characters')
       end

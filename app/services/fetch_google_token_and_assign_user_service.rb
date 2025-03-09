@@ -83,8 +83,8 @@ class FetchGoogleTokenAndAssignUserService < ApplicationService
   end
 
   def generate_random_password
-    PasswordGeneratorService.new(
+    PasswordGeneratorService.call(
       length: 8, min_uppercase: 1, min_lowercase: 1, min_number: 1, min_symbol: 1
-    ).call
+    )
   end
 end

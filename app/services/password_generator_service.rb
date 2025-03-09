@@ -1,4 +1,4 @@
-class PasswordGeneratorService
+class PasswordGeneratorService < ApplicationService
   class InvalidPasswordLength < StandardError; end
 
   def initialize(length:, min_uppercase:, min_lowercase:, min_number:, min_symbol:)
