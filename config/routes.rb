@@ -5,12 +5,17 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resources :products
   resources :registrations, only: [ :new, :create ]
-
   resources :carts, only: [ :show ] do
     post "remove"
   end
   post "carts/add", to: "carts#add", as: "cart_add"
-  # get 'cart', to: 'cart#show'
+
+  namespace :auth do
+    scope "/google" do
+      get "authenticate", to: "google#authenticate", as: "google"
+      get "callback", to: "google#callback", as: "google_callback"
+    end
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

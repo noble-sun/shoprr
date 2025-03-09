@@ -5,8 +5,10 @@ class User < ApplicationRecord
   has_many :addresses, dependent: :destroy
   has_many :orders, dependent: :destroy
 
-  validates_presence_of :email_address, :cpf, :password, :name, :surname
-  validates :phone, numericality: { only_integer: true }, length: { is: 11 }
+  has_one :identity_provider
+
+  validates_presence_of :email_address, :password, :name, :surname
+  validates :phone, numericality: { only_integer: true }, length: { is: 11 }, if: -> { phone.present? }
 
   with_options if: -> { password.present? } do
     validates :password, length: { minimum: 8 }
@@ -19,8 +21,9 @@ class User < ApplicationRecord
     validates_with EmailValidator
   end
 
-  with_options if: -> { cpf.present? } do
+  with_options if: -> { identity_provider.nil? } do
     validates :cpf,
+      presence: true,
       uniqueness: true,
       length: { is: 11 },
       numericality: { only_integer: true }

@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require "ostruct"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -24,8 +25,12 @@ module App
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    config.logger = Logger.new(STDOUT)
+
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    config.identity_provider = config_for(:identity_providers)
   end
 end

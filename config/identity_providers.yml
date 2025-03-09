@@ -1,0 +1,14 @@
+default: &default
+  google:
+    authorize_url: /o/oauth2/v2/auth
+    token_url: /token
+    revoke_url: /revoke
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

@@ -87,6 +87,10 @@ jobs:
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
+          BASE_URL: ${{ secrets.BASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_ACCOUNT_BASE_URL: ${{ secrets.GOOGLE_ACCOUNT_BASE_URL }}
+          GOOGLE_OAUTH2_BASE_URL: ${{ secrets.GOOGLE_OAUTH2_BASE_URL }}
         run: bundle exec rspec
 
       - name: Keep screenshots from failed system tests
